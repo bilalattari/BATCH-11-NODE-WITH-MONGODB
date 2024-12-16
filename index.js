@@ -6,11 +6,13 @@ import taskRoutes from "./routers/tasks.js";
 import authRoutes from "./routers/auth.js";
 import userRoutes from "./routers/users.js";
 import { authenticateUser } from "./middleware/authentication.js";
+import cors from 'cors'
 const app = express();
 const PORT = 4000;
 
 app.use(morgan("tiny"));
 app.use(express.json());
+app.use(cors('*'))
 
 mongoose
   .connect(process.env.MONGODBURI)
