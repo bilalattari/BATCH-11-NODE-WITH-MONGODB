@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import taskRoutes from "./routers/tasks.js";
 import authRoutes from "./routers/auth.js";
 import userRoutes from "./routers/users.js";
+import { authenticateUser } from "./middleware/authentication.js";
 const app = express();
 const PORT = 4000;
 
@@ -18,7 +19,7 @@ mongoose
 
 app.get("/", (req, res) => res.send("Server is running"));
 
-app.use("/task", taskRoutes);
+app.use("/task", authenticateUser, taskRoutes);
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 

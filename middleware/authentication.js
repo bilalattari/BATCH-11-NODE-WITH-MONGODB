@@ -10,6 +10,8 @@ export async function authenticateUser(req, res, next) {
     if (!token) return sendResponse(res, 403, null, true, "Token not provided");
     const decoded = jwt.verify(token, process.env.AUTH_SECRET);
 
+    console.log("decoded=>", decoded)
+
     if (decoded) {
       const user = await User.findById(decoded._id);
       if (!user) return sendResponse(res, 403, null, true, "User not found");
