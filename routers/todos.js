@@ -4,7 +4,7 @@ import {
   authenticateAdmin,
   authenticateUser,
 } from "../middleware/authentication.js";
-import Todos from "../models/todos.js";
+import Todos from "../models/Todos.js";
 
 const router = express.Router();
 
