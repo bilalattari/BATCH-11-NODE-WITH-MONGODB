@@ -1,24 +1,34 @@
-import sendResponse from "../helpers/sendResponse.js";
 import jwt from "jsonwebtoken";
+import sendResponse from "../helpers/sendResponse.js";
 import "dotenv/config";
-import User from "../models/User.js";
 
-export async function authenticateUser(req, res, next) {
-  try {
-    const bearerToken = req?.headers?.authorization;
-    const token = bearerToken?.split(" ")[1];
-    if (!token) return sendResponse(res, 403, null, true, "Token not provided");
-    const decoded = jwt.verify(token, process.env.AUTH_SECRET);
+export function authenticateUser(req, res, next) {
+  const bearerTOken = req.headers?.authorization;
+  console.log("bearerTOken=>", bearerTOken);
+  if (!bearerTOken)
+    return sendResponse(res, 400, null, true, "Token Not Provided");
 
-    if (decoded) {
-      const user = await User.findById(decoded._id);
-      if (!user) return sendResponse(res, 403, null, true, "User not found");
-      req.user = decoded;
-      next();
-    } else {
-      sendResponse(res, 500, null, true, "Something went wrong");
-    }
-  } catch (err) {
-    sendResponse(res, 500, null, true, "Something went wrong");
+  const token = bearerTOken.split(" ")[1];
+
+  const decoded = jwt.verify(token, process.env.AUTH_SECRET);
+
+  req.user = decoded;
+  console.log("decoded=>", decoded);
+  next();
+}
+
+export function authenticateAdmin(req, res, next) {
+  const bearerTOken = req.headers?.authorization;
+  if (!bearerTOken)
+    return sendResponse(res, 400, null, true, "Token Not Provided");
+
+  const token = bearerTOken.split(" ")[1];
+
+  const decoded = jwt.verify(token, process.env.AUTH_SECRET);
+  if (decoded.role == "admin") {
+    req.user = decoded;
+    next();
+  } else {
+    return sendResponse(res, 403, null, true, "Admin only allewd to access");
   }
 }
