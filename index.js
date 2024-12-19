@@ -8,12 +8,15 @@ import authRoutes from "./routers/auth.js";
 import userRoutes from "./routers/users.js";
 import todoRoutes from "./routers/todos.js";
 import courseRoutes from "./routers/course.js";
+import { authenticateUser } from "./middleware/authentication.js";
+import cors from "cors";
 const app = express();
 const PORT = 4000;
 
 app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
+app.use(cors("*"));
 
 mongoose
   .connect(process.env.MONGODBURI)
@@ -22,7 +25,7 @@ mongoose
 
 app.get("/", (req, res) => res.send("Server is running"));
 
-app.use("/task", taskRoutes);
+app.use("/task", authenticateUser, taskRoutes);
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/todos", todoRoutes);

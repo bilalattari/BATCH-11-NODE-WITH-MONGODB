@@ -13,7 +13,7 @@ const registerSchema = Joi.object({
     tlds: { allow: ["com", "net"] },
   }),
   password: Joi.string().min(6).required(),
-  fullname: Joi.string().alphanum().min(3).max(30).required(),
+  fullname: Joi.string().min(3).max(30).required(),
 });
 
 const loginSchema = Joi.object({
