@@ -9,7 +9,6 @@ import userRoutes from "./routers/users.js";
 import todoRoutes from "./routers/todos.js";
 import courseRoutes from "./routers/course.js";
 import { authenticateUser } from "./middleware/authentication.js";
-import cors from "cors";
 const app = express();
 const PORT = 4000;
 
