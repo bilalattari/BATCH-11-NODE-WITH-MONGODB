@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import taskRoutes from "./routers/tasks.js";
 import authRoutes from "./routers/auth.js";
 import userRoutes from "./routers/users.js";
+import donorRoutes from "./routers/blooddonors.js";
 import { authenticateUser } from "./middleware/authentication.js";
 import cors from 'cors'
 const app = express();
@@ -24,5 +25,6 @@ app.get("/", (req, res) => res.send("Server is running"));
 app.use("/task", authenticateUser, taskRoutes);
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/blooddonors", authenticateUser, donorRoutes);
 
 app.listen(PORT, () => console.log("Server is running on PORT " + PORT));

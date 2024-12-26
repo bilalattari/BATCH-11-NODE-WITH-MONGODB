@@ -13,9 +13,9 @@ export async function authenticateUser(req, res, next) {
     console.log("decoded=>", decoded)
 
     if (decoded) {
-      const user = await User.findById(decoded._id);
+      const user = await User.findById(decoded._id).lean();
       if (!user) return sendResponse(res, 403, null, true, "User not found");
-      req.user = decoded;
+      req.user = user;
       next();
     } else {
       sendResponse(res, 500, null, true, "Something went wrong");

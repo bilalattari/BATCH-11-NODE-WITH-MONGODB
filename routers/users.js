@@ -7,6 +7,17 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
+router.get('/userInfo', authenticateUser, async (req, res) => {
+  try {
+    sendResponse(res, 200, req.user, false, "User Fetched Successfully");
+  }
+  catch (err) {
+    sendResponse(res, 500, null, true, "Something went wrong");
+  }
+}
+)
+
+
 router.put("/", authenticateUser, async (req, res) => {
   try {
     const { city, country } = req.body;
