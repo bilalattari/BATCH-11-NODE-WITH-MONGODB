@@ -11,6 +11,7 @@ const userSchema = new Schema(
     country: { type: String },
     dob: { type: String },
     isProfileCompleted: { type: Boolean },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
   },
   { timestamps: true }
 );

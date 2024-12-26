@@ -37,4 +37,15 @@ router.put("/", authenticateUser, async (req, res) => {
   }
 });
 
+router.get("/myInfo", authenticateUser, async (req, res) => {
+  try {
+    const user = await User.findOne({
+      _id: req.user._id,
+    });
+    sendResponse(res, 200, user, false, "User Updated Successfully");
+  } catch (err) {
+    sendResponse(res, 500, null, true, "Something went wrong");
+  }
+});
+
 export default router;
