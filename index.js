@@ -9,6 +9,7 @@ import userRoutes from "./routers/users.js";
 import donorRoutes from "./routers/blooddonors.js";
 import todoRoutes from "./routers/todos.js";
 import courseRoutes from "./routers/course.js";
+import orderRoutes from "./routers/orders.js";
 import { authenticateUser } from "./middleware/authentication.js";
 const app = express();
 const PORT = 4000;
@@ -31,5 +32,6 @@ app.use("/user", userRoutes);
 app.use("/blooddonors", authenticateUser, donorRoutes);
 app.use("/todos", todoRoutes);
 app.use("/course", courseRoutes);
+app.use("/orders", orderRoutes);
 
 app.listen(PORT, () => console.log("Server is running on PORT " + PORT));

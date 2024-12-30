@@ -1,14 +1,13 @@
 import express from "express";
 import sendResponse from "../helpers/sendResponse.js";
 import {
-  authenticateAdmin,
   authenticateUser,
 } from "../middleware/authentication.js";
 import Todos from "../models/Todos.js";
 
 const router = express.Router();
 
-router.post("/", authenticateAdmin, async (req, res) => {
+router.post("/", async (req, res) => {
   let newTodo = new Todos({
     todo: req.body.todo,
     createdBy: req.user._id,
