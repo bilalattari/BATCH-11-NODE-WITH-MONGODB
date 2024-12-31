@@ -8,16 +8,44 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   const { bloodGroup, takingAntibiotic, age } = req.query
   const query = {}
-  if (age && age != 'all') query.age = { $gte: age }
+  if (age && age != 'all') query.age = { $gte: +age }
   if (bloodGroup && bloodGroup != 'all') query.bloodGroup = { $eq: bloodGroup }
   if (takingAntibiotic && takingAntibiotic != 'all') query.takingAntibiotic = {
     $eq: takingAntibiotic == 'yes' ? true : false
   }
-  console.log(query)
+  const bloodGroupWiseDonors = await BloodDonors.aggregate([
+    {
+      $match: query
+    },
+    {
+      $group: {
+        "_id": "$bloodGroup",
+        totalQuantity: { $sum: 1 }
+      }
+    },
+    {
+      $sort: { totalQuantity: 1 }
+    }
+  ])
+  const donors = await BloodDonors.aggregate([
+    {
+      $match: query
+    },
+    {
+      $addFields: {
+        isEligible: {
+          $cond: { if: { $lte: ["$age", 35] }, then: "yes", else: "no" }
+        }
+      }
+    },
+    {
+      $sort: { age: 1 }
+    }
+  ])
 
+  console.log("bloodGroupWiseDonors=>", bloodGroupWiseDonors)
   try {
-    const donors = await BloodDonors.find(query)
-    sendResponse(res, 200, donors, false, "Donors Fetched Successfully");
+    sendResponse(res, 200, { bloodGroupWiseDonors, donors }, false, "Donors Fetched Successfully");
   }
   catch (err) {
     sendResponse(res, 500, null, true, "Something went wrong");
