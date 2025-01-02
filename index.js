@@ -11,6 +11,9 @@ import todoRoutes from "./routers/todos.js";
 import courseRoutes from "./routers/course.js";
 import orderRoutes from "./routers/orders.js";
 import postRoutes from "./routers/post.js";
+import studentRoutes from "./routers/students.js";
+
+
 import { authenticateUser } from "./middleware/authentication.js";
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer'
@@ -49,6 +52,10 @@ app.use("/todos", todoRoutes);
 app.use("/course", courseRoutes);
 app.use("/orders", orderRoutes);
 app.use("/post", postRoutes);
+app.use("/students", studentRoutes);
+
+
+
 
 app.get("/sendEmail", (req, res) => {
   const { email, subject, content } = req.query
