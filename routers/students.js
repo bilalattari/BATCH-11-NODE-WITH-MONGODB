@@ -6,40 +6,98 @@ import Students from "../models/Students.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const { course, aboveAge, city } = req.query;
+  const { age, course, aboveThen } = req.query;
   const query = {};
-  if (course && course !== "all") query.course = course.toString();
-  if (aboveAge && aboveAge !== "all") query.age = { $gte: parseInt(aboveAge) };
-  if (city && city !== "all") query.city = city;
-  const students = await Students.find(query).populate("course", "title");
-  const studentsCount = await Students.find(query).countDocuments();
+  if (age) query.age = { $eq: parseInt(age) };
+  if (course) query.course = { $eq: course };
+  if (aboveThen) query.age = { $gt: parseInt(aboveThen) };
+  // const students = await Students.find(query);
 
-  const studentsByCourse = await Students.aggregate([
+  const students = await Students.aggregate([
     {
       $match: query,
     },
     {
-      $group: { _id: "$course", totalQuantity: { $sum: 1 } },
+      $addFields: {
+        totalResult: { $sum: "$results" },
+      },
+    },
+    {
+      $sort: {
+        totalResult: -1,
+      },
     },
     {
       $lookup: {
         from: "courses",
-        localField: "_id",
         foreignField: "_id",
-        as: "course",
+        localField: "course",
+        as: "courseDetail",
       },
     },
     {
-      $unwind: "$course", // Unwind the "course" array to make it a single object
+      $unwind: {
+        path: "$courseDetail",
+      },
     },
   ]);
+
+  const studentsAccordingToAge = await Students.aggregate([
+    {
+      $group: {
+        _id: "$age",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  const studentsAccordingToCourse = await Students.aggregate([
+    {
+      $group: {
+        _id: "$course",
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $lookup: {
+        from: "courses",
+        foreignField: "_id",
+        localField: "_id",
+        as: "courseDetail",
+      },
+    },
+    {
+      $unwind: {
+        path: "$courseDetail",
+      },
+    },
+    {
+      $project: {
+        title: "$courseDetail.title",
+        count: 1,
+      },
+    },
+  ]);
+
   sendResponse(
     res,
     200,
-    { count: studentsCount, students, studentsByCourse },
+    {
+      total: students.length,
+      studentsAccordingToCourse,
+      studentsAccordingToAge,
+      students,
+    },
     false,
     "Students Fetched Successfully"
   );
 });
 
 export default router;
+
+//add krni he field
+//field ko remove krna he
+//keys ko update krna he
+//data ke behalf pe koi calculation krwani he
+//data ko group krna he
+
+// Aggregation

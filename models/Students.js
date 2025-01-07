@@ -44,6 +44,7 @@ const studentSchema = new mongoose.Schema(
       trim: true,
       match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
     },
+    results: [Number],
   },
   {
     timestamps: true, // Adds createdAt and updatedAt fields
